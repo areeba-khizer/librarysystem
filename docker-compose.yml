@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_DATABASE_HOST=db
+      - MYSQL_DATABASE_USER=root
+      - MYSQL_DATABASE_PASSWORD=root123
+      - MYSQL_DATABASE_DB=lms
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    networks:
+      - library-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=lms
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/lms.sql:/docker-entrypoint-initdb.d/lms.sql
+    ports:
+      - "3307:3306"
+    networks:
+      - library-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+
+networks:
+  library-network:
+    driver: bridge 

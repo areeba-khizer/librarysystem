@@ -35,7 +35,7 @@ class UserDAO():
         password = user['password']
         
         q = self.db.query(
-            "INSERT INTO @table (name, email, password) VALUES('{}', '{}', '{}')".format(name, email, password)
+            "INSERT INTO @table (name, email, password, bio, mob, `lock`) VALUES('{}', '{}', '{}', '', '', 0)".format(name, email, password)
         )
         self.db.commit()
         return q
