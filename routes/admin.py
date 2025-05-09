@@ -1,5 +1,6 @@
-from flask import Blueprint, g, escape, session, redirect, render_template, request, jsonify, Response
-from app import DAO
+from flask import Blueprint, flash, g, escape, session, redirect, render_template, request, jsonify, Response
+# from app import DAO
+from dao_instance import DAO
 from Misc.functions import *
 
 from Controllers.AdminManager import AdminManager
@@ -99,25 +100,72 @@ def view_book(id):
 @admin_view.route('/books/add', methods=['GET', 'POST'])
 @admin_manager.admin.login_required
 def book_add():
-	admin_manager.admin.set_session(session, g)
-	
-	return render_template('books/add.html', g=g)
+    admin_manager.admin.set_session(session, g)
+
+    if request.method == 'POST':
+        name = request.form.get('name')  # Changed from title
+        desc = request.form.get('desc')  # Changed from descp
+        author = request.form.get('author')  # New field
+        edition = request.form.get('edition')  # New field
+        count = request.form.get('count')  # Changed from qty
+        availability = 'availability' in request.form  # Fixed typo "avaliable"
+
+        # Ensure all fields are provided
+        if not name or not desc or not author or not edition or not count:
+            flash("All fields are required!", "danger")
+            return redirect('/admin/books/add')
+
+        book_data = {
+            "name": name,
+            "desc": desc,
+            "author": author,
+            "edition": edition,
+            "count": count,
+            "availability": availability
+        }
+
+        # Save book to the database
+        book_manager.save_book_to_db(book_data)  
+
+        flash("Book added successfully!", "success")
+        return redirect('/admin/books')
+
+    return render_template('books/add.html', g=g)
+
 
 
 @admin_view.route('/books/edit/<int:id>', methods=['GET', 'POST'])
 @admin_manager.admin.login_required
 def book_edit(id):
-	admin_manager.admin.set_session(session, g)
+    admin_manager.admin.set_session(session, g)
 
-	if id != None:
-		b = book_manager.getBook(id)
+    if request.method == 'POST':
+        book_data = {
+            'name': request.form.get('name'),
+            'desc': request.form.get('desc'),
+            'author': request.form.get('author'),
+            'availability': request.form.get('availability', type=int),
+            'edition': request.form.get('edition'),
+            'count': request.form.get('count', type=int),
+        }
 
-		if b and len(b) <1:
-			return render_template('edit.html', error="No book found!")
+        success = book_manager.update_book(id, book_data)
 
-		return render_template("books/edit.html", book=b, g=g)
-	
-	return redirect('/books')
+        if success:
+            flash("Book updated successfully!", "success")
+        else:
+            flash("Failed to update book!", "danger")
+
+        return redirect('/admin/books')
+
+    book = book_manager.getBook(id)
+    if not book:
+        return render_template('edit.html', error="No book found!")
+
+    return render_template("books/edit.html", book=book, g=g)
+
+
+
 
 @admin_view.route('/books/delete/<int:id>', methods=['GET'])
 @admin_manager.admin.login_required
@@ -151,4 +199,15 @@ def search():
 		return render_template("books/views.html", search=True, books=d, count=len(d), keyword=escape(keyword), g=g, admin=admin)
 
 	return render_template('books/views.html', error="No books found!", keyword=escape(keyword))
+
+@admin_view.route('/users/delete/<int:id>', methods=['POST'])
+@admin_manager.admin.login_required
+def user_delete(id):
+    if id is not None:
+        user_manager.delete(id)
+
+    return redirect('/admin/users/view')
+
+
+
 

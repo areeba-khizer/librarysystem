@@ -25,7 +25,7 @@
 								<p class="mb-1 font-weight-light"><span class="badge badge-warning">Books Owned: {{user['books_owned']}}</span></p>
 							</div>
 						</div>
-					    <small>{{ "Locked" if user['lock']>0 else ""}}</small>
+						<small>{{ "Locked" if user['lock'] and user['lock'] > 0 else ""}}</small>
 					    <small class="float-right">{{ ago(user['created_at']) }}</small>
 					  </a>
 					</div>

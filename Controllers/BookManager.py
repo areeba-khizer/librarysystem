@@ -12,6 +12,10 @@ class BookManager():
 			book_list = self.dao.list(availability)
 
 		return book_list
+	
+	def save_book_to_db(self, book_data):
+		return self.dao.add_book(book_data)
+        
 
 	def getReserverdBooksByUser(self, user_id):
 		books = self.dao.getReserverdBooksByUser(user_id)
@@ -45,3 +49,8 @@ class BookManager():
 
 	def delete(self, id):
 		self.dao.delete(id)
+
+	def update_book(self, book_id, book_data):
+		return self.dao.update_book(book_id, book_data)
+        
+	
