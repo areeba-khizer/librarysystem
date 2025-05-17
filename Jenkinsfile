@@ -6,6 +6,7 @@ pipeline {
         IMAGE_NAME = "library-management-system"
         DOCKER_USERNAME = "areebakhizer"
         TAG = "ci"
+        REMOTE_HOST = 'ubuntu@54.172.53.178'
     }
 
     stages {
@@ -25,6 +26,18 @@ pipeline {
                         def app = docker.image("${DOCKER_USERNAME}/${IMAGE_NAME}:${TAG}")
                         app.push()
                     }
+                }
+            }
+        }
+        stage('Reload docker compose') {
+            steps {
+                sshagent (credentials: ['6193a4d2-cd41-440a-a455-8e72bc500da4']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no $REMOTE_HOST << EOF
+                      cd /home/ubuntu/librarysystem
+                      ls
+                    EOF
+                    """
                 }
             }
         }
