@@ -27,8 +27,6 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./db/lms.sql:/docker-entrypoint-initdb.d/lms.sql
-    ports:
-      - "3307:3306"
     networks:
       - library-network
     healthcheck:
