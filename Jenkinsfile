@@ -5,7 +5,7 @@ pipeline {
         APP_NAME = 'library-system'
         IMAGE_NAME = "library-management-system"
         DOCKER_USERNAME = "areebakhizer"
-        TAG = "ci"
+        TAG = "${1:-latest}"
         REMOTE_HOST = 'ubuntu@54.172.53.178'
     }
 
