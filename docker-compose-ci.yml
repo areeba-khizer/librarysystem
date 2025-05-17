@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   web:
-    image: areebakhizer/library-management-system:ci
+    image: areebakhizer/library-management-system:${IMAGE_TAG}
     ports:
       - "5001:5000"
     environment:
