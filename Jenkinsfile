@@ -32,12 +32,7 @@ pipeline {
         stage('Reload docker compose') {
             steps {
                 sshagent (credentials: ['6193a4d2-cd41-440a-a455-8e72bc500da4']) {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no $REMOTE_HOST << EOF
-                      cd /home/ubuntu/librarysystem
-                      ls
-                    EOF
-                    """
+                    sh './deploy.sh'
                 }
             }
         }
