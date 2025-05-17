@@ -32,7 +32,7 @@ pipeline {
         stage('Reload docker compose') {
             steps {
                 sshagent (credentials: ['6193a4d2-cd41-440a-a455-8e72bc500da4']) {
-                    sh './deploy.sh'
+                    sh 'chmod +x ./deploy.sh && ./deploy.sh'
                 }
             }
         }
