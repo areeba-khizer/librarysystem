@@ -15,7 +15,7 @@ IMAGE_TAG="$1"
 # === SSH Command ===
 ssh -o StrictHostKeyChecking=no "$REMOTE_HOST" << EOF
   cd "$COMPOSE_DIR"
-  export IMAGE_TAG="$IMAGE_TAG"
+  echo "IMAGE_TAG=$IMAGE_TAG" > .env
   echo "$IMAGE_TAG"
   echo "Bringing down service"
   sudo docker-compose -p library-ci -f docker-compose-ci.yml down
