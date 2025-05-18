@@ -15,6 +15,7 @@ IMAGE_TAG="$1"
 # === SSH Command ===
 ssh -o StrictHostKeyChecking=no "$REMOTE_HOST" << EOF
   cd "$COMPOSE_DIR"
+  git pull
   echo "IMAGE_TAG=$IMAGE_TAG" > .env
   echo "$IMAGE_TAG"
   echo "Bringing down service"
